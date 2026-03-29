@@ -47,6 +47,7 @@ else
 }
 // Register repositories
 builder.Services.AddScoped<IUserRepo, UserRepo>();
+builder.Services.AddScoped<IAccountRepo, AccountRepo>();
 
 // JWT Authentication configuration
 var jwtSettings = builder.Configuration.GetSection("Jwt");
@@ -76,6 +77,16 @@ builder.Services.AddAuthentication(options =>
 });
 
 var app = builder.Build();
+
+if (isSQL)
+{
+    // Apply pending migrations at runtime
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbContext = scope.ServiceProvider.GetRequiredService<BankingLiteDbContext>();
+        dbContext.Database.Migrate();
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

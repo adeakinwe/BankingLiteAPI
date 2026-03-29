@@ -61,6 +61,20 @@ namespace BankingLite.Api.Controllers
             });
         }
 
+        [HttpGet("user/{email}")]
+        public async Task<IActionResult> GetUserByEmail(string email)     
+        {
+            try
+            {
+                var user = await _userRepo.GetUserByEmail(email);
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error retrieving user by email: {ex.Message}");
+            }
+        }
+
         private string GenerateJwtToken(UserResponse user)
         {
             var jwtSettings = _configuration.GetSection("Jwt");
