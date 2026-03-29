@@ -8,5 +8,6 @@ namespace BankingLite.Api.Interface
         Task<UserResponse> Register(RegisterRequest request);
         Task<UserResponse> Login(LoginRequest request);
         Task<UserResponse> GetUserById(int id);
+        Task<UserResponse> GetUserByEmail(string email);
     }
 }

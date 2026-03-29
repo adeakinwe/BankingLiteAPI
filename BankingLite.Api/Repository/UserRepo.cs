@@ -30,6 +30,19 @@ namespace BankingLite.Api.Repository
                 .FirstOrDefaultAsync() ?? throw new Exception("User not found");
         }
 
+        public async Task<UserResponse> GetUserByEmail(string email)
+        {
+            return await _dbContext.Users
+                .Where(u => u.Email == email)
+                .Select(u => new UserResponse
+                {
+                    Id = u.Id,
+                    FullName = u.FullName,
+                    Email = u.Email
+                })
+                .FirstOrDefaultAsync() ?? throw new Exception("User not found");
+        }
+
         public async Task<UserResponse> Login(LoginRequest request)
         {
             var user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Email == request.Email);
