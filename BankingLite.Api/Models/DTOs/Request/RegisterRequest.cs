@@ -1,4 +1,4 @@
-namespace Banking.Api.Models.DTOs.Request
+namespace BankingLite.Api.Models.DTOs.Request
 {
     public class RegisterRequest
     {

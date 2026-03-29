@@ -1,4 +1,4 @@
-using Banking.Api.Models.Entities;
+using BankingLite.Api.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace BankingLite.Api.Data

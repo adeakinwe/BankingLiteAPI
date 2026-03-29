@@ -1,4 +1,4 @@
-namespace Banking.Api.Models.Entities
+namespace BankingLite.Api.Models.Entities
 {
     public class User
     {
