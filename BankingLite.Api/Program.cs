@@ -19,6 +19,37 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<BankingLiteDbContext>(options =>
     options.UseInMemoryDatabase("BankingLiteDb"));
 
+
+// Get current environment from configuration
+var currentDB = builder.Configuration["currentDB"];
+Console.WriteLine($"Current DB from Config: {currentDB}");
+bool isSQL = currentDB == "SQL" ? true : false;
+
+if (isSQL)
+{
+    // Get MySQL password from environment variable
+    string mysqlPassword = Environment.GetEnvironmentVariable("MYSQL_ROOT_PASSWORD") ?? throw new InvalidOperationException("Environment variable MYSQL_ROOT_PASSWORD is not set.");
+    Console.WriteLine($"__DB_PASSWORD__: {mysqlPassword}");
+    
+    string connectionString = builder.Configuration.GetConnectionString("Conn") ?? "";
+
+    //Inject MySQL password dynamically into connection string
+    if (!string.IsNullOrWhiteSpace(mysqlPassword) && connectionString.Contains("__MYSQL_ROOT_PASSWORD__"))
+    {
+        connectionString = connectionString.Replace("__DB_PASSWORD__", mysqlPassword);
+    }
+
+    Console.WriteLine($"ConnectionString: {connectionString}");
+    Console.WriteLine($"Running using MySQL");
+    builder.Services.AddDbContext<BankingLiteDbContext>(options =>
+        options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+}
+else
+{
+    Console.WriteLine($"Running using In-Memory DB)");
+    builder.Services.AddDbContext<BankingLiteDbContext>(options =>
+        options.UseInMemoryDatabase("BankingLiteDb"));
+}
 // Register repositories
 builder.Services.AddScoped<IUserRepo, UserRepo>();
 
@@ -61,7 +92,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
-app.UseAuthorization(); 
+app.UseAuthorization();
 app.MapControllers();
 
 app.Run();

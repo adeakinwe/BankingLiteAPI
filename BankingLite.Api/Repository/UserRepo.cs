@@ -19,7 +19,7 @@ namespace BankingLite.Api.Repository
 
         public async Task<UserResponse> GetUserById(int id)
         {
-            return await _dbContext.Users
+            return await _dbContext.User
                 .Where(u => u.Id == id)
                 .Select(u => new UserResponse
                 {
@@ -32,7 +32,7 @@ namespace BankingLite.Api.Repository
 
         public async Task<UserResponse> GetUserByEmail(string email)
         {
-            return await _dbContext.Users
+            return await _dbContext.User
                 .Where(u => u.Email == email)
                 .Select(u => new UserResponse
                 {
@@ -45,7 +45,7 @@ namespace BankingLite.Api.Repository
 
         public async Task<UserResponse> Login(LoginRequest request)
         {
-            var user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Email == request.Email);
+            var user = await _dbContext.User.SingleOrDefaultAsync(u => u.Email == request.Email);
             if (user == null)
                 throw new Exception("User not found");
 
@@ -64,7 +64,7 @@ namespace BankingLite.Api.Repository
 
         public async Task<UserResponse> Register(RegisterRequest request)
         {
-            if (await _dbContext.Users.AnyAsync(u => u.Email == request.Email))
+            if (await _dbContext.User.AnyAsync(u => u.Email == request.Email))
                 throw new InvalidOperationException("Email is already registered.");
 
             CreatePasswordHash(request.Password, out var hash, out var salt);
@@ -77,7 +77,7 @@ namespace BankingLite.Api.Repository
                 PasswordSalt = salt
             };
 
-            _dbContext.Users.Add(user);
+            _dbContext.User.Add(user);
             await _dbContext.SaveChangesAsync();
 
             var userResponse = new UserResponse
