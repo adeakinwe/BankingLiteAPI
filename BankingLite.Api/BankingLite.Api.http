@@ -1,0 +1,6 @@
+@BankingLite.Api_HostAddress = http://localhost:5147
+
+GET {{BankingLite.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
