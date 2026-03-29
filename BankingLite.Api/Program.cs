@@ -15,11 +15,6 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Configure Entity Framework Core with In-Memory Database
-builder.Services.AddDbContext<BankingLiteDbContext>(options =>
-    options.UseInMemoryDatabase("BankingLiteDb"));
-
-
 // Get current environment from configuration
 var currentDB = builder.Configuration["currentDB"];
 Console.WriteLine($"Current DB from Config: {currentDB}");
@@ -30,11 +25,11 @@ if (isSQL)
     // Get MySQL password from environment variable
     string mysqlPassword = Environment.GetEnvironmentVariable("MYSQL_ROOT_PASSWORD") ?? throw new InvalidOperationException("Environment variable MYSQL_ROOT_PASSWORD is not set.");
     Console.WriteLine($"__DB_PASSWORD__: {mysqlPassword}");
-    
+
     string connectionString = builder.Configuration.GetConnectionString("Conn") ?? "";
 
     //Inject MySQL password dynamically into connection string
-    if (!string.IsNullOrWhiteSpace(mysqlPassword) && connectionString.Contains("__MYSQL_ROOT_PASSWORD__"))
+    if (!string.IsNullOrWhiteSpace(mysqlPassword) && connectionString.Contains("__DB_PASSWORD__"))
     {
         connectionString = connectionString.Replace("__DB_PASSWORD__", mysqlPassword);
     }
