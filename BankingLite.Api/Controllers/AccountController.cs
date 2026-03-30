@@ -25,7 +25,11 @@ namespace BankingLite.Api.Controllers
                 if (string.IsNullOrWhiteSpace(request.BankName) || string.IsNullOrWhiteSpace(request.AccountNumber))
                     return BadRequest("BankName and AccountNumber are required.");
                 var createdAccount = await _accountRepo.CreateAccountAsync(request);
-                return CreatedAtAction(nameof(GetAccountById), createdAccount);
+                return CreatedAtAction(nameof(GetAccountById), new { accountId = createdAccount.AccountId }, createdAccount);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {

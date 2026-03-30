@@ -16,8 +16,13 @@ namespace BankingLite.Api.Repository
             _context = context;
         }
 
-        public async Task<AccountCreate> CreateAccountAsync(AccountCreate entity)
+        public async Task<AccountRead> CreateAccountAsync(AccountCreate entity)
         {
+            var userAccountExists = await _context.Account
+                .AnyAsync(a => a.UserId == entity.UserId && a.AccountNumber == entity.AccountNumber);
+            if (userAccountExists)                
+            throw new InvalidOperationException("An account with the same account number already exists for this user.");   
+            
             var account = new Account
             {
                 UserId = entity.UserId,
@@ -29,7 +34,16 @@ namespace BankingLite.Api.Repository
             _context.Account.Add(account);
             await _context.SaveChangesAsync();
 
-            return entity;
+            var createdAccount = new AccountRead
+            {
+                AccountId = account.AccountId,
+                UserId = account.UserId,
+                BankName = account.BankName,
+                AccountNumber = account.AccountNumber,
+                Balance = account.Balance
+            };
+
+            return createdAccount;
         }
 
         public async Task<AccountRead?> GetAccountByIdAsync(int accountId)
@@ -61,7 +75,7 @@ namespace BankingLite.Api.Repository
             });
         }
 
-        public async Task<AccountCreate> UpdateAccountAsync(AccountCreate account, int accountId)
+        public async Task<AccountRead> UpdateAccountAsync(AccountCreate account, int accountId)
         {
             var existingAccount = await _context.Account.FindAsync(accountId);
             if (existingAccount == null) throw new KeyNotFoundException($"Account with ID {accountId} not found.");
@@ -71,7 +85,14 @@ namespace BankingLite.Api.Repository
             existingAccount.Balance = account.Balance;
 
             await _context.SaveChangesAsync();
-            return account;
+            return new AccountRead
+            {
+                AccountId = existingAccount.AccountId,
+                UserId = existingAccount.UserId,
+                BankName = existingAccount.BankName,
+                AccountNumber = existingAccount.AccountNumber,
+                Balance = existingAccount.Balance
+            };
         }
     }
 }

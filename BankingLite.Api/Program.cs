@@ -48,6 +48,7 @@ else
 // Register repositories
 builder.Services.AddScoped<IUserRepo, UserRepo>();
 builder.Services.AddScoped<IAccountRepo, AccountRepo>();
+builder.Services.AddScoped<ITransactionRepo, TransactionRepo>();
 
 // JWT Authentication configuration
 var jwtSettings = builder.Configuration.GetSection("Jwt");
