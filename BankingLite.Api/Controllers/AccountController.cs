@@ -1,12 +1,14 @@
 using BankingLite.Api.Interface;
 using BankingLite.Api.Models.DTOs.Request;
 using BankingLite.Api.Models.DTOs.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BankingLite.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AccountController : ControllerBase
     {
         private readonly IAccountRepo _accountRepo;

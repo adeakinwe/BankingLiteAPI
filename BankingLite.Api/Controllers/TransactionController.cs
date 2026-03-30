@@ -1,11 +1,13 @@
 using BankingLite.Api.Interface;
 using BankingLite.Api.Models.DTOs.Request;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BankingLite.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class TransactionController : ControllerBase
     {
         private readonly ITransactionRepo _transactionRepo;
@@ -14,14 +16,14 @@ namespace BankingLite.Api.Controllers
         {
             _transactionRepo = transactionRepo;
         }
-
+        
         [HttpPost("transfer")]
         public async Task<IActionResult> Transfer([FromBody] TransactionCreate request)
         {
             if (request.Amount <= 0)
                 return BadRequest("Amount must be greater than zero.");
             try
-            {
+            {                
                 var result = await _transactionRepo.TransferFundAsync(request);
                 return Ok(result);
             }
