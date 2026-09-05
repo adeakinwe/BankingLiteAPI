@@ -43,7 +43,7 @@ namespace BankingLite.Api.Controllers
         public async Task<ActionResult<AccountRead>> GetAccountById(int accountId)
         {
             var account = await _accountRepo.GetAccountByIdAsync(accountId);
-            if (account == null) return NotFound();
+            if (account == null) return StatusCode(404, $"Account not found for ID: {accountId}");
             return Ok(account);
         }
 
@@ -53,7 +53,7 @@ namespace BankingLite.Api.Controllers
             try
             {
                 var accounts = await _accountRepo.GetAccountsByUserIdAsync(userId);
-                if (accounts == null || !accounts.Any()) return NotFound();
+                if (accounts == null || !accounts.Any()) return StatusCode(404, $"No accounts found for user ID: {userId}");
                 return Ok(accounts);
             }
             catch (Exception ex)
@@ -77,7 +77,7 @@ namespace BankingLite.Api.Controllers
             }
             catch (KeyNotFoundException)
             {
-                return NotFound();
+                return StatusCode(404, $"Account not found for ID: {accountId}");
             }
             catch (Exception ex)
             {
