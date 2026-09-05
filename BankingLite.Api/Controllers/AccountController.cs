@@ -56,6 +56,10 @@ namespace BankingLite.Api.Controllers
                 if (accounts == null || !accounts.Any()) return StatusCode(404, $"No accounts found for user ID: {userId}");
                 return Ok(accounts);
             }
+            catch (KeyNotFoundException ex)
+            {
+                return StatusCode(404, ex.Message);
+            }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Internal server error: {ex.Message}");

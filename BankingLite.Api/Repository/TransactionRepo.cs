@@ -28,6 +28,14 @@ namespace BankingLite.Api.Repository
             if (recipientAccount == null)
                 throw new InvalidOperationException("Recipient account not found.");
 
+            var senderUser = await _context.User.SingleOrDefaultAsync(u => u.Id == senderAccount.UserId);
+            if (senderUser == null)
+                throw new InvalidOperationException("Sender user not found.");
+
+            var recipientUser = await _context.User.SingleOrDefaultAsync(u => u.Id == recipientAccount.UserId);
+            if (recipientUser == null)
+                throw new InvalidOperationException("Recipient user not found.");
+
             if (senderAccount.AccountId == recipientAccount.AccountId)
                 throw new InvalidOperationException("Cannot transfer to the same account.");
 
@@ -59,6 +67,8 @@ namespace BankingLite.Api.Repository
 
                 var transferCompletedRead = new TransactionRead
                 {
+                    SenderName = senderUser.FullName,
+                    RecipientName = recipientUser.FullName,
                     SenderAccountNumber = senderAccount.AccountNumber,
                     RecipientAccountNumber = recipientAccount.AccountNumber,
                     Amount = transfer.Amount,

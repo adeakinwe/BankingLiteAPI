@@ -63,6 +63,9 @@ namespace BankingLite.Api.Repository
 
         public async Task<IEnumerable<AccountRead?>> GetAccountsByUserIdAsync(int userId)
         {
+            if (await _context.User.Where(a => a.Id == userId).FirstOrDefaultAsync() == null)
+                throw new KeyNotFoundException($"User with ID {userId} not found.");
+
             var accounts = await _context.Account.Where(a => a.UserId == userId).ToListAsync();
             if (accounts == null || accounts.Count == 0) return Enumerable.Empty<AccountRead>();
             return accounts.Select(account => new AccountRead
